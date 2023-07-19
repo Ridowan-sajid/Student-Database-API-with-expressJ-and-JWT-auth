@@ -3,9 +3,10 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const studentSchema = require("../Schemas/studentSchema");
 const Student = new mongoose.model("Student", studentSchema);
+const checkLogin = require("../middlewares/checkLogin");
 
 //To get only active students
-router.get("/active", async (req, res) => {
+router.get("/active", checkLogin, async (req, res) => {
   const student = new Student();
   const data = await student.findActive();
   res.status(200).json({
@@ -14,7 +15,7 @@ router.get("/active", async (req, res) => {
 });
 
 //To get only Node js students
-router.get("/node", async (req, res) => {
+router.get("/node", checkLogin, async (req, res) => {
   const data = await Student.findNode();
   res.status(200).json({
     data,
@@ -22,7 +23,7 @@ router.get("/node", async (req, res) => {
 });
 
 //To get students by their name
-router.get("/:name", async (req, res) => {
+router.get("/:name", checkLogin, async (req, res) => {
   const data = await Student.find().findName(req.params.name);
   res.status(200).json({
     data,
@@ -30,7 +31,7 @@ router.get("/:name", async (req, res) => {
 });
 
 //Get all students
-router.get("/", async (req, res) => {
+router.get("/", checkLogin, async (req, res) => {
   try {
     // const data = await Student.find({ status: "active" });
 
@@ -55,7 +56,7 @@ router.get("/", async (req, res) => {
 });
 
 //Get a single students
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkLogin, async (req, res) => {
   try {
     const data = await Student.find({ _id: req.params.id });
 
@@ -71,7 +72,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //Create a student
-router.post("/", async (req, res) => {
+router.post("/", checkLogin, async (req, res) => {
   try {
     const newStudent = new Student(req.body);
     await newStudent.save();
@@ -87,7 +88,7 @@ router.post("/", async (req, res) => {
 });
 
 //Create multiple student
-router.post("/all", async (req, res) => {
+router.post("/all", checkLogin, async (req, res) => {
   try {
     await Student.insertMany(req.body);
     res.status(200).json({
@@ -101,7 +102,7 @@ router.post("/all", async (req, res) => {
 });
 
 //Update one student
-router.put("/:id", async (req, res) => {
+router.put("/:id", checkLogin, async (req, res) => {
   try {
     await Student.updateOne(
       {
@@ -124,7 +125,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //To get what i changes in update
-router.put("/changes/:id", async (req, res) => {
+router.put("/changes/:id", checkLogin, async (req, res) => {
   try {
     const std = await Student.findByIdAndUpdate(
       {
@@ -151,7 +152,7 @@ router.put("/changes/:id", async (req, res) => {
 });
 
 //Delete a single students
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkLogin, async (req, res) => {
   try {
     const data = await Student.deleteOne({ _id: req.params.id });
 
@@ -167,7 +168,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 //Delete multiple students
-router.delete("/", async (req, res) => {
+router.delete("/", checkLogin, async (req, res) => {
   try {
     const data = await Student.deleteMany({ status: "active" });
 
