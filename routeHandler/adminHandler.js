@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const adminSchema = require("../Schemas/adminSchema");
+const checkLogin = require("../middlewares/checkLogin");
 const Admin = new mongoose.model("Admin", adminSchema);
 
 router.post("/signup", async (req, res) => {
@@ -72,6 +73,19 @@ router.post("/login", async (req, res) => {
         message: "You are not valid user",
       });
     }
+  } catch (err) {
+    res.status(500).json({
+      message: "There is a server side error",
+    });
+  }
+});
+
+router.get("/all", checkLogin, async (req, res) => {
+  try {
+    const admin = await Admin.find({}).populate("students");
+    res.status(200).json({
+      data: admin,
+    });
   } catch (err) {
     res.status(500).json({
       message: "There is a server side error",

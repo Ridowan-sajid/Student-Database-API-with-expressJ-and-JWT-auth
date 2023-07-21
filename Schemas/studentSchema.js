@@ -14,9 +14,13 @@ const studentSchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  admin: {
+    type: mongoose.Types.ObjectId,
+    ref: "Admin",
+  },
 });
 
-// we created a custom function for getting active student.
+// we can create custom function
 
 //Instance method
 studentSchema.methods = {

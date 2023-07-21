@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const studentSchema = require("../Schemas/studentSchema");
 const Student = new mongoose.model("Student", studentSchema);
 const checkLogin = require("../middlewares/checkLogin");
+const adminSchema = require("../Schemas/adminSchema");
+const Admin = new mongoose.model("Admin", adminSchema);
 
 //To get only active students
 router.get("/active", checkLogin, async (req, res) => {
@@ -37,11 +39,14 @@ router.get("/", checkLogin, async (req, res) => {
 
     //const data = await Student.find();
 
-    const data = await Student.find().limit(2).select({
-      _id: 0,
-      date: 0,
-      __v: 0,
-    }); //We can use method chaining
+    const data = await Student.find({}) //inside {} braces is mandatory
+      .populate("admin", "name username -_id") //with populate we can see the user details(by whom the student created). Inside populate we have to put the name of the relational field name from Student table which is admin. (- _id means we won't gonna see id of the admin)
+      .limit(2)
+      .select({
+        _id: 0,
+        date: 0,
+        __v: 0,
+      }); //We can use method chaining
     //in select if we set 0 it won't gonna show in response. if we set 1 it will gonna show in response. default is 1.
 
     res.status(200).json({
@@ -49,6 +54,7 @@ router.get("/", checkLogin, async (req, res) => {
       message: "Successfull",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: "There is a server side error",
     });
@@ -74,8 +80,21 @@ router.get("/:id", checkLogin, async (req, res) => {
 //Create a student
 router.post("/", checkLogin, async (req, res) => {
   try {
-    const newStudent = new Student(req.body);
-    await newStudent.save();
+    const newStudent = new Student({
+      ...req.body,
+      admin: req.userId,
+    });
+
+    const student = await newStudent.save();
+
+    await Admin.updateOne(
+      { _id: req.userId },
+      {
+        $push: {
+          students: student._id,
+        },
+      }
+    );
 
     res.status(200).json({
       message: "Student inserted successfully",
