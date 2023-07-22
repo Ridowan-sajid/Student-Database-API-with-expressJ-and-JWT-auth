@@ -4,14 +4,14 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const adminSchema = require("../Schemas/adminSchema");
-const checkLogin = require("../middlewares/checkLogin");
 const Admin = new mongoose.model("Admin", adminSchema);
+const checkLogin = require("../middlewares/checkLogin");
 
 router.post("/signup", async (req, res) => {
   try {
-    const prev = await Admin.find({ username: req.body.username });
-
-    if (!prev[0]) {
+    const prev = await Admin.findOne({ username: req.body.username });
+    console.log(prev);
+    if (!prev) {
       const salt = await bcrypt.genSalt();
       const hassedpassed = await bcrypt.hash(req.body.password, salt);
 
@@ -40,18 +40,16 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const admin = await Admin.find({ username: req.body.username }); //it will give me admin as list of object not as a single object
-    console.log(admin);
-    if (admin && admin.length > 0) {
-      const isMatched = await bcrypt.compare(
-        req.body.password,
-        admin[0].password //though we are getting a list of object that means we have to take first object from that list. If there is multiple admin with same username then its gonna be an error
-      );
+    const admin = await Admin.findOne({ username: req.body.username });
+
+    if (admin) {
+      const isMatched = await bcrypt.compare(req.body.password, admin.password);
       if (isMatched) {
+        console.log(admin);
         const token = jwt.sign(
           {
-            username: admin[0].username,
-            userId: admin[0]._id,
+            username: admin.username,
+            userId: admin._id,
           },
           process.env.JWT_SECRET,
           {
