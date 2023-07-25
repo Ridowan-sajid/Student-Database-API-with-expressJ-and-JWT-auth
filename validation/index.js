@@ -1,6 +1,6 @@
 const { check } = require("express-validator");
 
-const runValidation = [
+const registerValidation = [
   check("name")
     .trim()
     .notEmpty()
@@ -32,4 +32,19 @@ const runValidation = [
     .withMessage("Status should active or inactive"),
 ];
 
-module.exports = runValidation;
+const loginValidation = [
+  check("username")
+    .trim()
+    .notEmpty()
+    .withMessage("UserName can't be empty")
+    .isLength({ min: 5 })
+    .withMessage("userName must have at least 5 characters"),
+  check("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password can't be empty")
+    .isLength({ min: 8 })
+    .withMessage("Password must have at least 8 characters"),
+];
+
+module.exports = { registerValidation, loginValidation };

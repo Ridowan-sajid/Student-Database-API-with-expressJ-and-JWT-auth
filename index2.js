@@ -7,6 +7,7 @@ const dotenv = require("dotenv"); //to extract data from .env file
 const app = express();
 dotenv.config();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //Database Connection with Mongose
 mongoose
