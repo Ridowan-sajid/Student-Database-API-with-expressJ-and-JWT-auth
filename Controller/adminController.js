@@ -52,7 +52,7 @@ const login = async (req, res) => {
           },
           process.env.JWT_SECRET,
           {
-            expiresIn: "1h",
+            expiresIn: "2h",
           }
         );
 
@@ -77,6 +77,54 @@ const login = async (req, res) => {
   }
 };
 
+//change Password
+const changePassword = async (req, res) => {
+  try {
+    const admin = await Admin.findOne({ username: req.username });
+
+    if (admin) {
+      const isMatched = await bcrypt.compare(
+        req.body.oldPassword,
+        admin.password
+      );
+      if (isMatched) {
+        console.log(admin);
+        const salt = await bcrypt.genSalt();
+        const hashedpassed = await bcrypt.hash(req.body.newPassword, salt);
+
+        await Admin.findByIdAndUpdate(
+          {
+            _id: req.userId,
+          },
+          {
+            $set: {
+              password: hashedpassed,
+            },
+          }
+        );
+
+        res.status(200).json({
+          message: "Password Change Successful!",
+        });
+      } else {
+        res.status(500).json({
+          message: "You are not valid user",
+        });
+      }
+    } else {
+      res.status(500).json({
+        message: "You are not valid user",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "There is a server side error",
+    });
+  }
+};
+
+//All admin List
+
 const allAdmin = async (req, res) => {
   try {
     const admin = await Admin.find({}).populate("students");
@@ -90,4 +138,4 @@ const allAdmin = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, allAdmin };
+module.exports = { signup, login, allAdmin, changePassword };

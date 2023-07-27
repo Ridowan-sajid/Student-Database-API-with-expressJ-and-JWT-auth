@@ -34,7 +34,6 @@ const allStudents = async (req, res) => {
 
     const data = await Student.find({}) //inside {} braces is mandatory
       .populate("admin", "name username -_id") //with populate we can see the user details(by whom the student created). Inside populate we have to put the name of the relational field name from Student table which is admin. (- _id means we won't gonna see id of the admin)
-      .limit(2)
       .select({
         _id: 0,
         date: 0,
@@ -112,16 +111,7 @@ const createMultipleStudent = async (req, res) => {
 
 const updateOneStudent = async (req, res) => {
   try {
-    await Student.updateOne(
-      {
-        _id: req.params.id, //we can search by any other parameter
-      },
-      {
-        $set: {
-          status: req.body.status,
-        },
-      }
-    );
+    await Student.findByIdAndUpdate(req.params.id, req.body);
     res.status(200).json({
       message: "Student Updated successfully",
     });
