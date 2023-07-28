@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const transporter = require("../middlewares/mailSent");
 const adminSchema = require("../Schemas/adminSchema");
 const Admin = new mongoose.model("Admin", adminSchema);
 
@@ -123,6 +124,27 @@ const changePassword = async (req, res) => {
   }
 };
 
+//Forget Password
+
+//change Password
+const forgetPassword = async (req, res) => {
+  const info = await transporter.sendMail({
+    from: "hw733029@gmail.com",
+    to: "sajidridowan7@gmail.com",
+    subject: "Hello there",
+    text: "Testing",
+  });
+  if (info.accepted) {
+    res.status(200).json({
+      message: "Message sent",
+    });
+  } else {
+    res.status(500).json({
+      message: "There is a server side error",
+    });
+  }
+};
+
 //All admin List
 
 const allAdmin = async (req, res) => {
@@ -138,4 +160,4 @@ const allAdmin = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, allAdmin, changePassword };
+module.exports = { signup, login, allAdmin, changePassword, forgetPassword };

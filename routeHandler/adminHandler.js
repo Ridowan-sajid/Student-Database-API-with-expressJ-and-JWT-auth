@@ -6,6 +6,7 @@ const {
   login,
   allAdmin,
   changePassword,
+  forgetPassword,
 } = require("../Controller/adminController");
 const { registerValidation, loginValidation } = require("../validation/index");
 const validationCheck = require("../validation/validMsg");
@@ -13,8 +14,10 @@ const validationCheck = require("../validation/validMsg");
 router.post("/signup", registerValidation, validationCheck, signup);
 
 router.post("/login", loginValidation, validationCheck, login);
-router.post("/changePassword", checkLogin, changePassword);
+router.patch("/changePassword", checkLogin, changePassword);
 
 router.get("/all", checkLogin, allAdmin);
+
+router.get("/sentMail", forgetPassword);
 
 module.exports = router;
