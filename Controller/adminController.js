@@ -166,27 +166,39 @@ const forgetPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const otp = await Otp.findOne({ otpS: req.body.otp });
-
     const admin = await Admin.findOne({ _id: otp.userId });
 
     if (admin) {
-      const salt = await bcrypt.genSalt();
-      const hashedpassed = await bcrypt.hash(req.body.password, salt);
+      ///
 
-      await Admin.findByIdAndUpdate(
-        {
-          _id: admin._id,
-        },
-        {
-          $set: {
-            password: hashedpassed,
+      var currentDate = new Date();
+      var specifiedDate = new Date(otp.createdDate);
+      var difference = currentDate.getTime() - specifiedDate.getTime();
+      var differenceInMinutes = Math.floor(difference / 1000 / 60);
+
+      if (differenceInMinutes <= 5) {
+        const salt = await bcrypt.genSalt();
+        const hashedpassed = await bcrypt.hash(req.body.password, salt);
+
+        await Admin.findByIdAndUpdate(
+          {
+            _id: admin._id,
           },
-        }
-      );
-
-      res.status(200).json({
-        message: "Password Change Successful!",
-      });
+          {
+            $set: {
+              password: hashedpassed,
+            },
+          }
+        );
+        res.status(200).json({
+          message: "Password Change Successful!",
+        });
+      } else {
+        res.status(500).json({
+          message: "Something is wrong!",
+        });
+      }
+      ////
     }
   } catch (err) {
     res.status(500).json({
