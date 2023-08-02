@@ -15,13 +15,13 @@ const signup = async (req, res) => {
     if (!prev) {
       const salt = await bcrypt.genSalt();
       const hashedpassed = await bcrypt.hash(req.body.password, salt);
-
       const admin = new Admin({
         name: req.body.name,
         username: req.body.username,
         dob: req.body.dob,
         password: hashedpassed,
         status: req.body.status,
+        email: req.body.email,
       });
 
       await admin.save();
@@ -36,7 +36,7 @@ const signup = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({
-      message: "There is a server side error",
+      message: err,
     });
   }
 };

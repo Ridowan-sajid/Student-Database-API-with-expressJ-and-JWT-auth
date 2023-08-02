@@ -19,7 +19,7 @@ router.patch("/changePassword", checkLogin, changePassword);
 
 router.get("/all", checkLogin, allAdmin);
 
-router.get("/sentMail", forgetPassword);
+router.post("/sentMail", forgetPassword);
 
 router.post("/resetPassword", resetPassword);
 

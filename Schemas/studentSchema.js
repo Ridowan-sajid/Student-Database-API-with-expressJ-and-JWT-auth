@@ -9,6 +9,7 @@ const studentSchema = mongoose.Schema({
   status: {
     type: String,
     enum: ["active", "inactive"],
+    required: true,
   },
   date: {
     type: Date,

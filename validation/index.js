@@ -6,8 +6,7 @@ const registerValidation = [
     .notEmpty()
     .withMessage("Name can't be empty")
     .isLength({ min: 7 })
-    .withMessage("Name must have at least 7 characters")
-    .matches(/^[A-Z][a-z ]+$/),
+    .withMessage("Name must have at least 7 characters"),
   check("username")
     .trim()
     .notEmpty()

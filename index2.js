@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const studentHandler = require("./routeHandler/studentHandler");
 const adminHandler = require("./routeHandler/adminHandler");
 const dotenv = require("dotenv"); //to extract data from .env file
+const cors = require("cors");
 
 const app = express();
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 //Database Connection with Mongose
 mongoose
@@ -18,6 +20,6 @@ mongoose
 app.use("/student", studentHandler);
 app.use("/admin", adminHandler);
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Listening to port 3000");
 });

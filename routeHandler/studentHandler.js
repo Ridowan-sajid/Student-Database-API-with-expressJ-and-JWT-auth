@@ -22,7 +22,7 @@ router.get("/active", checkLogin, active);
 router.get("/node", checkLogin, nodeStudent);
 
 //To get students by their name
-router.get("/:name", checkLogin, studentByName);
+router.get("/name/:name", checkLogin, studentByName);
 
 //Get all students
 router.get("/", checkLogin, allStudents);
@@ -37,7 +37,7 @@ router.post("/", checkLogin, createStudent);
 router.post("/all", checkLogin, createMultipleStudent);
 
 //Update one student
-router.put("/:id", checkLogin, updateOneStudent);
+router.put("/update/:id", checkLogin, updateOneStudent);
 
 //To get what i changes in update
 router.put("/changes/:id", checkLogin, updateTrackChanges);

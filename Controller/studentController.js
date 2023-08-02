@@ -32,14 +32,11 @@ const allStudents = async (req, res) => {
 
     //const data = await Student.find();
 
-    const data = await Student.find({}) //inside {} braces is mandatory
-      .populate("admin", "name username -_id") //with populate we can see the user details(by whom the student created). Inside populate we have to put the name of the relational field name from Student table which is admin. (- _id means we won't gonna see id of the admin)
+    const data = await Student.find({})
+      .populate("admin", "name username -_id")
       .select({
-        _id: 0,
-        date: 0,
         __v: 0,
-      }); //We can use method chaining
-    //in select if we set 0 it won't gonna show in response. if we set 1 it will gonna show in response. default is 1.
+      });
 
     res.status(200).json({
       data: data,
@@ -55,7 +52,12 @@ const allStudents = async (req, res) => {
 
 const getSingleStudent = async (req, res) => {
   try {
-    const data = await Student.find({ _id: req.params.id });
+    const data = await Student.findById(req.params.id).populate(
+      "admin",
+      "name username -_id"
+    );
+
+    console.log(data);
 
     res.status(200).json({
       data: data,
@@ -149,6 +151,7 @@ const updateTrackChanges = async (req, res) => {
 
 const deleteSingleStudent = async (req, res) => {
   try {
+    console.log("sfsd");
     const data = await Student.deleteOne({ _id: req.params.id });
 
     res.status(200).json({
