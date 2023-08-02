@@ -9,6 +9,8 @@
 * Change Password
 * Reset Password with otp
 
+**Admin authenticated with JWT**
+
 **Student feature:**
 
 * Create Student
